@@ -204,10 +204,10 @@ namespace GnosiaCustomizer.utils
             contents += WriteDialogue("opening_remarks_two_deaths", "Reacting to the deaths of {0} ('Name1 and Name2') during the night phase. One of them was the bug, eliminated by the Engineer.", d["t_okuyami_f"][0]);
             contents += WriteDialogue("step_forward", "Requesting that whoever has the role of {0} step forward.", d["t_co_req"][0]);
             contents += WriteDialogue("reveal_role_engineer", "First person to reveal role as {0} ('Engineer'). They can investigate one person every night.", d["t_co"][1]);
-            contents += WriteDialogue("reveal_own_role_engineer", "Counter-claiming {1} (single or multiple names) for the role of {0} ('Engineer').", d["t_co_taiko"][1]);
+            contents += WriteDialogue("reveal_own_role_engineer", "Counter-claiming {1} (single or multiple names, ex. \"Name1 or Name2\") for the role of {0} ('Engineer').", d["t_co_taiko"][1]);
             contents += WriteDialogue("reveal_role_engineer_with_gnosia_result", "Revealing role as {0} ('Engineer') while also stating {1} is Gnosia.", d["t_co_find"][1]);
             contents += WriteDialogue("reveal_role_doctor", "First to reveal role as {0} ('Doctor'). They can investigate whoever was put into cold sleep the previous night.", d["t_co"][2]);
-            contents += WriteDialogue("reveal_own_role_doctor", "Counter-claiming {1} (single or multiple names) for the role of {0} ('Doctor').", d["t_co_taiko"][2]);
+            contents += WriteDialogue("reveal_own_role_doctor", "Counter-claiming {1} (single or multiple names, ex. \"Name1 or Name2\") for the role of {0} ('Doctor').", d["t_co_taiko"][2]);
             contents += WriteDialogue("reveal_role_doctor_with_gnosia_result", "Revealing role as {0} ('Doctor') while also stating the person {1} was Gnosia.", d["t_co_find"][2]);
             contents += WriteDialogue("reveal_role_guard_duty", "First to reveal role as {0} ('Guard Duty'). The other person on guard duty will corroborate this.", d["t_co"][4]);
             contents += WriteDialogue("reveal_role_guard_duty_response", "Corroborating {1}'s claim of being {0} ('Guard Duty').", d["t_co_taiko"][4]);
@@ -220,7 +220,7 @@ namespace GnosiaCustomizer.utils
             contents += WriteDialogue("report_pt1_matching_result", "The first part of the report statement as a Doctor or Engineer who is following up after someone else's report. They examined the same person last night, {1}, and got the same result. {0} = the string 'Gnosia'.", d["t_houkoku_s"][0]);
             contents += WriteDialogue("report_pt1_conflicting_result", "The first part of the report statement as a Doctor or Engineer who is following up after someone else's report. They examined the same person last night, {0}, but got a different result. {0} = the string 'Gnosia'.", d["t_houkoku_w"][0]);
             contents += WriteDialogue("report_engineer_pt1_target_killed", "As {0} ('Engineer') giving their report first, the first sentence of their report that they investigated {1}, who was killed last night.", d["t_uranai_o"][0]);
-            contents += WriteDialogue("report_engineer_pt1", "As {0} ('Engineer') giving their report first, the first sentence of their report that they investigated {1}.", d["t_uranai_s"][0]);
+            contents += WriteDialogue("report_engineer_pt1", "As the Engineer giving their report first, the first sentence of their report that they investigated {1}. {0} = \"Gnosia\"", d["t_uranai_s"][0]);
             contents += WriteDialogue("report_engineer_pt1_different_target", " As {0} ('Engineer'), the first sentence of their report that they investigated a different target than what the other Engineer reported.", d["t_uranai_b"][0]);
             contents += WriteDialogue("report_engineer_pt2_gnosia_result", "As Engineer, the second sentence of their report that {1} was {0} ('Gnosia').", d["t_uranai_t"][0]);
             contents += WriteDialogue("report_engineer_pt2_human_result", "As Engineer, the second sentence of their report that {1} was NOT {0} ('Gnosia').", d["t_uranai_f"][0]);
@@ -294,12 +294,12 @@ namespace GnosiaCustomizer.utils
             contents += WriteDialogue("definite_enemy_revealed", "Admitting that {0} was correct in calling them out as Definite Enemy.", d["t_hosho_get"][1]);
             contents += WriteDialogue("lets_vote_nothing_to_say", " Recognizing there's no need for discussion, skipping straight to the vote.", d["t_tohyo_go"][0]);
             contents += WriteDialogue("lets_vote", "Indicating that it is now time to vote.", d["t_tohyo_mae"][0]);
-            contents += WriteDialogue("lets_vote_tiebreaker", "Acknowledging that {0} (multiple names) have tied, and that we must vote again.", d["t_tohyo_sai"][0]);
-            contents += WriteDialogue("tiebreaker_vote_indecisive", "Reaction to a second tie when voting.", d["t_tohyo_kurikaeshi"][0]);
-            contents += WriteDialogue("vote_skipped", "Giving up and skipping cold sleep, after running out of time.", d["t_tohyo_dame"][0]);
+            contents += WriteDialogue("lets_vote_tiebreaker", "Acknowledging that {0} (ex. Name1 and Name2) have tied, and that we must vote again.", d["t_tohyo_sai"][0]);
+            contents += WriteDialogue("tiebreaker_vote_indecisive", "Reaction when the tiebreaker vote fails. After this statement, characters can propose to either freeze everyone or no one.", d["t_tohyo_kurikaeshi"][0]);
+            contents += WriteDialogue("vote_skipped", "Giving up and skipping cold sleep, after the group has failed to agree to either freeze everyone or no one.", d["t_tohyo_dame"][0]);
             contents += WriteDialogue("freeze_everyone_proposal", "Proposing to the group to freeze the everyone in {0} (ex. 'Name1 and Name2').", d["t_tohyo_jeno"][0]);
             contents += WriteDialogue("freeze_nobody_proposal", "Proposing to the group not to freeze everyone in {0} (ex. 'Name1 and Name2').", d["t_tohyo_alive"][0]);
-            contents += WriteDialogue("freeze_everyone_agree", "Agreeing with someone elses' plan to freeze all of the candidates.", d["t_tohyo_jeno_ok"][0]);
+            contents += WriteDialogue("freeze_everyone_agree", "Agreeing with someone else's plan to freeze all of the candidates.", d["t_tohyo_jeno_ok"][0]);
             contents += WriteDialogue("freeze_everyone_disagree", "Disagreeing with someone else's plan to freeze all of the candidates.", d["t_tohyo_jeno_ng"][0]);
             contents += WriteDialogue("freeze_nobody_agree", "Agreeing with someone else's plan to freeze none of the candidates.", d["t_tohyo_alive_ok"][0]);
             contents += WriteDialogue("freeze_nobody_disagree", "Disgreeing with someone else's plan to freeze none of the candidates.", d["t_tohyo_alive_ng"][0]);
@@ -349,7 +349,7 @@ namespace GnosiaCustomizer.utils
             contents += WriteDialogue("sk_chari_block_argument", "Prevent the group from objecting to {0}.", d["t_skill_t_hanronKinshi"][0]);
             contents += WriteDialogue("sk_perfo_exaggerate_doubt", "Emphasizing {0}'s statement that {1} is suspicious.", d["t_skill_t_kyakushoku"][0]);
             contents += WriteDialogue("sk_perfo_exaggerate_cover", "Emphasizing {0}'s statement that {1} can be trusted.", d["t_skill_t_kyakushoku"][1]);
-            contents += WriteDialogue("sk_perfo_exaggerate_support_counter", "{2} expressed trust in {0}, and then {1} disagreed. Emphasizing {1}'s counter-argument against {2}, ultimately saying that {0} is not trustworthy.", d["t_skill_t_kyakushoku"][2]);
+            contents += WriteDialogue("sk_perfo_exaggerate_support_counter", "{0} made a statement about {1}. {2} opposed {0}'s statement. Supporting {2}'s point of view.", d["t_skill_t_kyakushoku"][2]);
             contents += WriteDialogue("sk_perfo_exaggerate_dont_vote", "Emphasizing {0}'s statement not to vote for {1}.", d["t_skill_t_kyakushoku"][3]);
             contents += WriteDialogue("sk_steal_obfuscate", "Changing the subject to a distracting topic, to divert attention away.", d["t_skill_h_uyamuya"][0]);
             contents += WriteDialogue("sk_perfo_retaliate", "After being doubted by {0}, reflecting their words back at them to suggest they are the more suspicious one.", d["t_skill_h_hangeki"][0]);
