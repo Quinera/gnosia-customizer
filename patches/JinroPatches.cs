@@ -47,6 +47,7 @@ namespace GnosiaCustomizer.patches
         internal static void Initialize(ConcurrentDictionary<int, HashSet<string>> skillMap)
         {
             SkillMap = skillMap;
+            Logger.LogInfo($"JinroPatches initialized with SkillMap containing {SkillMap.Count} entries.");
 
             // Calculate bit masks for night skills
             if (SkillMap != null && SkillMap.Count > 0)
@@ -80,13 +81,21 @@ namespace GnosiaCustomizer.patches
                 var gameData = Utils.GetGameDataViaReflection();
                 if (gameData == null)
                 {
+                    Logger.LogError("GameData is null, cannot check skills.");
                     return true;
                 }
                 var absoluteId = gameData.chara[cid].id;
+
+                // TODO: Allow customizing player skills
+                if (absoluteId == 0)
+                {
+                    return true;
+                }
+
                 if (!SkillMap.ContainsKey(absoluteId) || SkillMap[absoluteId] == null || absoluteId <= 0 || absoluteId > Consts.NumCharacters)
                 {
-                    Logger.LogError("GameData is null, cannot check skills.");
-                    return false;
+                    Logger.LogInfo($"SkillMap does not contain the character ID {absoluteId} or the ID is invalid.");
+                    return true;
                 }
 
                 var skillKey = "";
