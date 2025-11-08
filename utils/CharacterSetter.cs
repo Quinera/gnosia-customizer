@@ -22,7 +22,6 @@ namespace GnosiaCustomizer.utils
         private const string HonorificFieldName = "t_keisho";
         private const string NoteNumFieldName = "d_tokkiNum";
         private const string NoteTextFieldName = "d_tokki";
-        private const string NoteTypeFieldName = "d_tokkiType";
         private const string DefenseMinFieldName = "hpMin";
         private const string DefenseWithGnosFieldName = "hpWithGnos";
         private const string PersonalFieldName = "t_personal";
@@ -284,7 +283,6 @@ namespace GnosiaCustomizer.utils
             if (charaText.Notes != null)
             {
                 var newList = new List<string>();
-                var typeList = new List<int> { 0, 0, 0, 0, 0, 0, 0 };
                 foreach (var note in charaText.Notes)
                 {
                     var line = "...";
@@ -296,7 +294,6 @@ namespace GnosiaCustomizer.utils
                 }
                 SetField(charaStructBoxed, NoteNumFieldName, (byte)newList.Count);
                 SetField(charaStructBoxed, NoteTextFieldName, newList);
-                SetField(charaStructBoxed, NoteTypeFieldName, typeList);
             }
             if (charaText.DefenseMin != null)
             {
