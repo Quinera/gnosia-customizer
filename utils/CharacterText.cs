@@ -12,6 +12,7 @@ namespace GnosiaCustomizer.utils
         public string Bio1 { get; set; } = default;
         public string Bio2 { get; set; } = default;
         public string Honorific { get; set; } = default;
+        public List<string> Notes { get; set; } = default;
         public byte? Sex { get; set; } = 2; // 0 = Male, 1 = Female, 2 = Non-Binary
         public uint? Age { get; set; } = 25;
         public Dictionary<string, float> Attributes { get; set; } = default;
@@ -46,23 +47,33 @@ namespace GnosiaCustomizer.utils
 
                 switch (key)
                 {
-                    case "name": 
-                        Name = value.ToString(); 
+                    case "name":
+                        Name = value.ToString();
                         break;
-                    case "origin": 
-                        Origin = value.ToString(); 
+                    case "origin":
+                        Origin = value.ToString();
                         break;
-                    case "bio1": 
+                    case "bio1":
                         Bio1 = value.ToString();
                         break;
-                    case "bio2": 
-                        Bio2 = value.ToString(); 
+                    case "bio2":
+                        Bio2 = value.ToString();
                         break;
                     case "honorific": Honorific = value.ToString();
                         break;
+                    case "notes":
+                        Notes = new List<string>();
+                        if (value is YamlSequenceNode seqNode)
+                        {
+                            foreach (var noteNode in seqNode)
+                            {
+                                Notes.Add(noteNode.ToString());
+                            }
+                        }
+                        break;
                     case "sex":
-                        if (byte.TryParse(value.ToString(), out var sex)) 
-                        { 
+                        if (byte.TryParse(value.ToString(), out var sex))
+                        {
                             Sex = sex;
                         }
                         break;
