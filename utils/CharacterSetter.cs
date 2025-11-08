@@ -17,6 +17,7 @@ namespace GnosiaCustomizer.utils
         private const string NameFieldName = "name";
         private const string SexFieldName = "sex";
         private const string AgeFieldName = "age";
+        private const string BioFieldName = "t_temp";
         private const string OriginFieldName = "d_place";
         private const string HonorificFieldName = "t_keisho";
         private const string DefenseMinFieldName = "hpMin";
@@ -103,8 +104,7 @@ namespace GnosiaCustomizer.utils
             { "t_skill_h_dojo", ["sk_charm_regret"] },
             { "t_skill_h_help", ["sk_perfo_seek_help%{0}", "sk_perfo_seek_help_reaction%{0}"] },
             { "t_skill_h_careful", ["sk_intui_dont_be_fooled%{0}"] },
-            { "t_skill_dogeza", ["sk_stealth_grovel_reaction%{0}", "sk_stealth_grovel%{0}"] },
-            { "t_temp", ["bio1", "bio2"] }
+            { "t_skill_dogeza", ["sk_stealth_grovel_reaction%{0}", "sk_stealth_grovel%{0}"] }
         };
 
         private static readonly List<string> PersonalLines0 = new List<string>
@@ -261,6 +261,19 @@ namespace GnosiaCustomizer.utils
             {
                 SetField(charaStructBoxed, AgeFieldName, charaText.Age.Value);
             }
+            if (charaText.Bio1 != null)
+            {
+                if (charaText.Bio2 == null)
+                {
+                    SetField(charaStructBoxed, BioFieldName, new List<string>()
+                    {charaText.Bio1, charaText.Bio1 });
+                }
+                else
+                {
+                    SetField(charaStructBoxed, BioFieldName, new List<string>()
+                    {charaText.Bio1, charaText.Bio2 });
+                }
+            }
             if (charaText.Honorific != null)
             {
                 SetField(charaStructBoxed, HonorificFieldName, charaText.Honorific);
@@ -350,7 +363,7 @@ namespace GnosiaCustomizer.utils
                         {
                             toAdd.Add("...");
                         }
-                        else if (lineIndex < strArray.Count) 
+                        else if (lineIndex < strArray.Count)
                         {
                             toAdd.Add(strArray[lineIndex]);
                         }
