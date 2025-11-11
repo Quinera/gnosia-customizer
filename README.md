@@ -1,4 +1,4 @@
-# gnosia-customizer — Extended Fork (WIP)
+# 👽 gnosia-customizer — Extended Fork (WIP)
 
 This repository is a functional fork of the original **gnosia-customizer** project.
 It adds new customization systems focused on character dialogue behavior, profile editing, and data-page overrides.
@@ -9,7 +9,7 @@ Original repository: https://github.com/shapeintheglass/gnosia-customizer
 
 ---
 
-## ✅ Added Features (Fork Enhancements)
+## ✅️ Added Features (Fork Enhancements)
 
 ### **1. Per-Speaker Nickname Overrides**
 Characters can now refer to each other differently depending on who is speaking.
@@ -47,7 +47,7 @@ This enables:
 
 ---
 
-## ✅ Installation
+## 💿️ Installation
 
 1. Install **BepInEx 5**.
 2. Run the game once to generate the `plugins/` folder.
@@ -70,7 +70,7 @@ plugins/
 
 ---
 
-## ✅ Character Configuration Guide
+## 🗒️ Character Configuration Guide
 
 Each character folder contains a `config.yaml` file.
 The following extensions are supported by this fork.
@@ -89,9 +89,26 @@ nicknames:
 
 ### 2. Special Notes Text Example
 Add the following to the config.yaml file for the character you want to change:
+
 ```yaml
 notes:
   - "Has difficulty telling lies."
   - "Gets lost even on a straight path."
   - "Rumored to have lived for centuries."
 ```
+
+---
+
+## 🙅 Current Limitations / Not Yet Supported
+
+- Adding more `notes:` entries than the original character has slots will cause the game to treat them as locked, resulting in them not being displayed.
+- Player dialogue branches are not yet customizable.
+- The hidden “Love” stat still uses default values and cannot be overridden.
+- Preferred / Non-preferred places during the night phase cannot be edited.
+- Story cutscenes outside normal Gnosia loops (one-time events) are not affected by customization.
+- Text for `stealth_grovel (dogeza)` success and failure events is not customizable.
+
+## 🙇 Contributions Welcome
+
+Suggestions, improvements, and forks are very welcome.
+Pull requests expanding functionality or improving stability are encouraged.
