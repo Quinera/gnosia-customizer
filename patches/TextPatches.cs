@@ -6,6 +6,8 @@ using System;
 using HarmonyLib;
 using System.Reflection;
 using GnosiaCustomizer.utils;
+using gnosia;
+using application;
 using coreSystem;
 using System.Collections.Concurrent;
 
@@ -335,6 +337,85 @@ namespace GnosiaCustomizer.patches
                 {
                     TextPatches.Logger?.LogError($"[DoItPatch ERROR] {ex.Message}");
                 }
+            }
+        }
+    }
+
+    [HarmonyPatch]
+    internal class Patch_DataJoinTokucho
+    {
+        static MethodBase TargetMethod()
+        {
+            var t = AccessTools.TypeByName("application.DataJoinScreen");
+            return AccessTools.Method(t, "InitializeGlm");
+        }
+        static void Postfix(object __instance)
+        {
+            try
+            {
+                TextPatches.Logger.LogInfo("Tokucho patch: entered Postfix");
+
+                var mydata = (GameData)AccessTools.Field(__instance.GetType(), "mydata")
+                    .GetValue(__instance);
+
+                var idList = (List<int>)AccessTools.Field(__instance.GetType(), "idList")
+                    .GetValue(__instance);
+
+                int nowPeople = (int)AccessTools.Field(__instance.GetType(), "nowPeople")
+                    .GetValue(__instance);
+
+                int innerId = mydata.chara[idList[nowPeople]].id;
+
+                TextPatches.Logger.LogInfo($"Tokucho patch: innerId={innerId}");
+
+                var dataType = AccessTools.TypeByName("gnosia.Data");
+                var charaField = AccessTools.Field(dataType, "Chara");
+                var charaArray = (System.Collections.IList)charaField.GetValue(null);
+                var charaObj = charaArray[innerId];
+                var tAisatuField = AccessTools.Field(charaObj.GetType(), "t_aisatu");
+                var aisatu = (System.Collections.IList)tAisatuField.GetValue(charaObj);
+
+                TextPatches.Logger.LogInfo($"Tokucho patch: aisatu count={aisatu?.Count}");
+
+                if (aisatu != null && aisatu.Count > 0)
+                {
+                    // --- Retrieve tokucho TextArea from Screen.m_textAreaMap ---
+                    var screenType = typeof(application.Screen);
+                    var mapField = AccessTools.Field(screenType, "m_textAreaMap");
+                    var mapObj = mapField.GetValue(__instance);
+                    var map = mapObj as Dictionary<string, coreSystem.TextArea>;
+
+                    if (map != null && map.ContainsKey("tokucho"))
+                    {
+                        TextPatches.Logger.LogInfo("Tokucho patch: tokucho TextArea found in m_textAreaMap");
+
+                        var tokuchoArea = map["tokucho"];
+
+                        string msg = aisatu[0].ToString();
+                        TextPatches.Logger.LogInfo($"Tokucho patch: msg before tokuchoArea.SetText = {msg}");
+
+                        var setTextMethod = AccessTools.Method(typeof(coreSystem.TextArea),
+                                                               "SetText",
+                                                               new Type[] { typeof(string).MakeByRefType(), typeof(bool), typeof(bool) });
+
+                        object[] args = new object[] { msg, false, true };
+                        setTextMethod.Invoke(tokuchoArea, args);
+
+                        TextPatches.Logger.LogInfo("Tokucho patch: tokuchoArea.SetText invoked");
+
+                        tokuchoArea.SetTextarea(msg);
+
+                        TextPatches.Logger.LogInfo("Tokucho patch: tokuchoArea.SetTextarea invoked");
+                    }
+                    else
+                    {
+                        TextPatches.Logger.LogError("Tokucho patch: tokucho TextArea NOT found in m_textAreaMap");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                TextPatches.Logger.LogError($"Tokucho patch exception: {ex}");
             }
         }
     }

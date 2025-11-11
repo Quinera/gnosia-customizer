@@ -16,9 +16,12 @@ namespace GnosiaCustomizer.utils
         public const char Delimiter = '%';
         private const string NameFieldName = "name";
         private const string SexFieldName = "sex";
-        private const string AgeFieldName = "age";
+        private const string AgeFieldName = "t_aisatu";
+        private const string BioFieldName = "t_temp";
         private const string OriginFieldName = "d_place";
         private const string HonorificFieldName = "t_keisho";
+        private const string NoteNumFieldName = "d_tokkiNum";
+        private const string NoteTextFieldName = "d_tokki";
         private const string DefenseMinFieldName = "hpMin";
         private const string DefenseWithGnosFieldName = "hpWithGnos";
         private const string PersonalFieldName = "t_personal";
@@ -26,7 +29,6 @@ namespace GnosiaCustomizer.utils
 
         internal static readonly Dictionary<string, List<string>> DialogueInitialization = new Dictionary<string, List<string>>()
         {
-            { "t_aisatu", [ "introduction" ] },
             { "t_suspect", [ "doubt_dislike%{0}", "doubt_too_chatty%{0}", "doubt_too_popular%{0}", "doubt_too_quiet%{0}", "doubt_prob%{0}", "doubt_trusted%{0}", "doubt_collaborator%{0}", "doubt_avenge%{0}" ] },
             { "t_suspect_r", [ "doubt_trust_variant_dislike%{0}", "doubt_trust_variant_too_chatty%{0}", "doubt_trust_variant_too_popular%{0}", "doubt_trust_variant_too_quiet%{0}", "doubt_trust_variant_prob%{0}", "doubt_trust_variant_trusted%{0}", "doubt_trust_variant_collaborator%{0}", "doubt_trust_variant_avenge%{0}" ] },
             { "t_suspect_add", [ "doubt_day_one%{0}" ] },
@@ -103,8 +105,7 @@ namespace GnosiaCustomizer.utils
             { "t_skill_h_dojo", ["sk_charm_regret"] },
             { "t_skill_h_help", ["sk_perfo_seek_help%{0}", "sk_perfo_seek_help_reaction%{0}"] },
             { "t_skill_h_careful", ["sk_intui_dont_be_fooled%{0}"] },
-            { "t_skill_dogeza", ["sk_stealth_grovel_reaction%{0}", "sk_stealth_grovel%{0}"] },
-            { "t_temp", ["bio1", "bio2"] }
+            { "t_skill_dogeza", ["sk_stealth_grovel_reaction%{0}", "sk_stealth_grovel%{0}"] }
         };
 
         private static readonly List<string> PersonalLines0 = new List<string>
@@ -259,11 +260,40 @@ namespace GnosiaCustomizer.utils
             }
             if (charaText.Age != null)
             {
-                SetField(charaStructBoxed, AgeFieldName, charaText.Age.Value);
+                SetField(charaStructBoxed, AgeFieldName, new List<string>() { charaText.Age });
+                // SetField(charaStructBoxed, AgeFieldName, charaText.Age.Value);
+            }
+            if (charaText.Bio1 != null)
+            {
+                if (charaText.Bio2 == null)
+                {
+                    SetField(charaStructBoxed, BioFieldName, new List<string>()
+                    {charaText.Bio1, charaText.Bio1 });
+                }
+                else
+                {
+                    SetField(charaStructBoxed, BioFieldName, new List<string>()
+                    {charaText.Bio1, charaText.Bio2 });
+                }
             }
             if (charaText.Honorific != null)
             {
                 SetField(charaStructBoxed, HonorificFieldName, charaText.Honorific);
+            }
+            if (charaText.Notes != null)
+            {
+                var newList = new List<string>();
+                foreach (var note in charaText.Notes)
+                {
+                    var line = "...";
+                    if (note != null)
+                    {
+                        line = note;
+                    }
+                    newList.Add(line);
+                }
+                SetField(charaStructBoxed, NoteNumFieldName, (byte)newList.Count);
+                SetField(charaStructBoxed, NoteTextFieldName, newList);
             }
             if (charaText.DefenseMin != null)
             {
@@ -350,7 +380,7 @@ namespace GnosiaCustomizer.utils
                         {
                             toAdd.Add("...");
                         }
-                        else if (lineIndex < strArray.Count) 
+                        else if (lineIndex < strArray.Count)
                         {
                             toAdd.Add(strArray[lineIndex]);
                         }
