@@ -10,7 +10,19 @@ age: 21
 bio1: "High Stealth and low Intuition and Logic.\nFocused on self-preservation,\nhe is very good at surviving."
 bio2: ""
 # Honorific when they address other people (ex. -san, -sama, etc). Leave blank for no honorific.
-honorific: 
+honorific: ""
+
+# Information about special notes for characters.
+notes:
+  - "Speaks casually, but is careful not to stand out."
+  - "Has a serious problem with authority."
+  - "Raised together with intellectualized bonobos."
+  - "Will do anything to survive."
+
+# The nickname this character uses when calling others
+# nicknames:
+#   "SQ": "SQ-chan"
+#   "Raqio": "Raqio-kun"
 
 # Their base 'defense' rating against doubt.
 defense_min: 135
@@ -986,7 +998,8 @@ time_clam:
   sprite: 1
 
 # Night conversation that the character has discovered a liar. {0} = Player name, {1} = Target name.
-# Add 100 to the sprite index to trigger the sound effect.
+
+# Add 100 to the sprite index to trigger the sound effect.
 multiline_night_liar_found:
   lines:
     - line: "Hey, {0}.\nYou know what color a lie is?"
@@ -1009,7 +1022,8 @@ multiline_liar_found_followup:
 
 
 # Night conversation if the character wishes to team up. {0} = Player name..
-# Add 100 to the sprite index to trigger the sound effect.
+
+# Add 100 to the sprite index to trigger the sound effect.
 multiline_night_lets_collaborate:
   lines:
     - line: "..."

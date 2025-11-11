@@ -10,7 +10,21 @@ age: 18
 bio1: "Leads the group with balanced abilities.\nBrave and serious, and logic-leaning.\nEasily targeted due to low Stealth ability."
 bio2: ""
 # Honorific when they address other people (ex. -san, -sama, etc). Leave blank for no honorific.
-honorific: 
+honorific: ""
+
+# Information about special notes for characters.
+notes:
+  - "Strong sense of justice & responsibility. Logical."
+  - "Looping in different order than main character."
+  - "Dislikes Sha-Ming, sometimes fights with him."
+  - "Federal Galactic Army Special Forces member."
+  - "Hopes to save everyone onboard, if possible."
+  - "Escaped certain death with the \"key\"."
+
+# The nickname this character uses when calling others
+# nicknames:
+#   "SQ": "SQ-chan"
+#   "Raqio": "Raqio-kun"
 
 # Their base 'defense' rating against doubt.
 defense_min: 115
@@ -986,7 +1000,8 @@ time_clam:
   sprite: 5
 
 # Night conversation that the character has discovered a liar. {0} = Player name, {1} = Target name.
-# Add 100 to the sprite index to trigger the sound effect.
+
+# Add 100 to the sprite index to trigger the sound effect.
 multiline_night_liar_found:
   lines:
     - line: "..."
@@ -1001,7 +1016,8 @@ multiline_liar_found_followup:
 
 
 # Night conversation if the character wishes to team up. {0} = Player name..
-# Add 100 to the sprite index to trigger the sound effect.
+
+# Add 100 to the sprite index to trigger the sound effect.
 multiline_night_lets_collaborate:
   lines:
     - line: "..."

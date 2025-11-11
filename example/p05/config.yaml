@@ -10,7 +10,22 @@ age: 88
 bio1: "Extremely charismatic, and able to say pretty much\nanything and be forgiven, affording him great Stealth ability.\nWhen faking a role, he goes all in and is quickly found out."
 bio2: ""
 # Honorific when they address other people (ex. -san, -sama, etc). Leave blank for no honorific.
-honorific: 
+honorific: ""
+
+# Information about special notes for characters.
+notes:
+  - "Kind, positive personality. Weirdly charismatic."
+  - "Covered body in artificial skin after accident."
+  - "Artificial skin can be used as a spacesuit as well."
+  - "Set to go back in time and become a \"Little Grey\"."
+  - "Collector and master of retro games."
+  - "In love with Stella."
+  - "Has never had an actual girlfriend before."
+
+# The nickname this character uses when calling others
+# nicknames:
+#   "SQ": "SQ-chan"
+#   "Raqio": "Raqio-kun"
 
 # Their base 'defense' rating against doubt.
 defense_min: 120
@@ -986,7 +1001,8 @@ time_clam:
   sprite: 2
 
 # Night conversation that the character has discovered a liar. {0} = Player name, {1} = Target name.
-# Add 100 to the sprite index to trigger the sound effect.
+
+# Add 100 to the sprite index to trigger the sound effect.
 multiline_night_liar_found:
   lines:
     - line: "..."
@@ -1001,7 +1017,8 @@ multiline_liar_found_followup:
 
 
 # Night conversation if the character wishes to team up. {0} = Player name..
-# Add 100 to the sprite index to trigger the sound effect.
+
+# Add 100 to the sprite index to trigger the sound effect.
 multiline_night_lets_collaborate:
   lines:
     - line: "The Man, the Lone Wolf, Shigemichi!\n{0}, I've got a request for you!"

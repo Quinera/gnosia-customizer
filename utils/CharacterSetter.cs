@@ -261,7 +261,6 @@ namespace GnosiaCustomizer.utils
             if (charaText.Age != null)
             {
                 SetField(charaStructBoxed, AgeFieldName, new List<string>() { charaText.Age });
-                // SetField(charaStructBoxed, AgeFieldName, charaText.Age.Value);
             }
             if (charaText.Bio1 != null)
             {
