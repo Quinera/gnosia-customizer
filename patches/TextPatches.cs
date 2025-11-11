@@ -20,11 +20,14 @@ namespace GnosiaCustomizer.patches
 
         private static readonly ConcurrentDictionary<int, CharacterText> CharacterTexts = new();
 
-        private static readonly Dictionary<string, string> NameReplacements = [];
-        private static readonly List<string> NamesToReplace = [
+        private static readonly Dictionary<string, string> NameReplacements = new();
+        internal static int CurrentSpeakerId = 0;
+        private static readonly Dictionary<int, Dictionary<string, string>> NicknamesPerCharacter = new();
+        private static readonly List<string> NamesToReplace = new()
+        {
             "Gina", "SQ", "Raqio", "Stella", "Shigemichi", "Chipie", "Remnan",
             "Comet", "Yuriko", "Jonas", "Setsu", "Otome", "Sha-Ming", "Kukrushka"
-        ];
+        };
         private const string SqueakPrefix = "SQU";
 
         internal static void Initialize()
@@ -55,6 +58,30 @@ namespace GnosiaCustomizer.patches
                         if (localCharacterId != 0)
                         {
                             CharacterTexts[localCharacterId] = character;
+                            if (character.Nicknames != null)
+                            {
+                                var perChar = new Dictionary<string, string>();
+                                foreach (var kv in character.Nicknames)
+                                {
+                                    perChar[kv.Key] = kv.Value;
+                                    Logger?.LogInfo($"Nickname replacement loaded for {localCharacterId}: {kv.Key} → {kv.Value}");
+                                }
+                                // remap localCharacterId to absolute ID
+                                var idMap = new Dictionary<int, int>
+                                {
+                                    {1,2},{2,3},{3,4},{4,5},{5,6},{6,7},{7,13},{8,8},
+                                    {9,14},{10,9},{11,1},{12,11},{13,12},{14,10}
+                                };
+
+                                if (idMap.TryGetValue(localCharacterId, out var mappedId))
+                                {
+                                    NicknamesPerCharacter[mappedId] = perChar;
+                                }
+                                else
+                                {
+                                    NicknamesPerCharacter[localCharacterId] = perChar;
+                                }
+                            }
                             skillMap[localCharacterId] = character.KnownSkills;
                         }
                     }
@@ -138,8 +165,43 @@ namespace GnosiaCustomizer.patches
         [HarmonyPatch(typeof(ScriptParser), "SetText")]
         public class ScriptParserSetTextPatch
         {
-            static bool Prefix(ref string message)
+            static void Prefix(ref string message)
             {
+                TextPatches.Logger?.LogInfo("[STP] Prefix entered");
+                TextPatches.Logger?.LogInfo($"[STP] Original message: {message}");
+                // Resolve speaker from Data.gd
+                try
+                {
+                    var dataType = AccessTools.TypeByName("gnosia.Data");
+                    var gdField = AccessTools.Field(dataType, "gd");
+                    var gd = gdField.GetValue(null);
+                    TextPatches.Logger?.LogInfo($"[STP] gdField: {gdField}");
+                    TextPatches.Logger?.LogInfo($"[STP] gd: {gd}");
+                    var gdType = gd.GetType();
+                    TextPatches.Logger?.LogInfo($"[STP] gdType: {gdType}");
+
+                    var actionDoItField = AccessTools.Field(gdType, "actionDoIt");
+                    var actionDoItObj = actionDoItField.GetValue(gd);
+                    if (actionDoItObj != null)
+                    {
+                        var mainPField = AccessTools.Field(actionDoItObj.GetType(), "mainP");
+                        int dynamicMainP = (int)mainPField.GetValue(actionDoItObj);
+                        TextPatches.CurrentSpeakerId = dynamicMainP;
+                        TextPatches.Logger?.LogInfo($"[STP] CurrentSpeakerId (from actionDoIt) = {dynamicMainP}");
+                    }
+                    else
+                    {
+                        TextPatches.Logger?.LogInfo("[STP] actionDoIt is null - skipping speaker detection");
+                    }
+                    TextPatches.Logger?.LogInfo("[STP] Speaker resolution complete");
+                }
+                catch (Exception ex)
+                {
+                    TextPatches.Logger?.LogError($"[ScreenProcessor Speaker ERROR]: {ex.Message}");
+                }
+
+                TextPatches.Logger?.LogInfo("[STP] Checking for empty or substitution prefix");
+                // Empty or substitution prefix
                 if (string.IsNullOrWhiteSpace(message))
                 {
                     message = "...";
@@ -147,31 +209,134 @@ namespace GnosiaCustomizer.patches
                 else if (message.StartsWith(CharacterSetter.SubstitutionPrefix))
                 {
                     var tokens = message.Split(CharacterSetter.Delimiter);
-                    if (tokens.Length > 0)
+                    if (tokens.Length > 2)
                     {
-                        // 0 - Prefix
-                        // 1 - Character name
-                        // 2 - Message name
-                        // 3+ - Parameters
                         message = tokens[2];
+                        TextPatches.Logger?.LogInfo($"[STP] After substitution prefix: {message}");
                     }
                 }
-                else
+
+                TextPatches.Logger?.LogInfo("[STP] Starting NameReplacements check");
+                // Name replacements
+                foreach (var name in NameReplacements.Keys)
                 {
-                    foreach (var name in NameReplacements.Keys)
+                    if (message.Contains(name))
                     {
-                        if (message.Contains(name))
+                        if (name.Equals("SQ") && message.Contains("SQU"))
+                            continue;
+                        message = message.Replace(name, NameReplacements[name]);
+                        TextPatches.Logger?.LogInfo($"[STP] Name replaced: {name} -> {NameReplacements[name]}");
+                    }
+                }
+
+                TextPatches.Logger?.LogInfo("[STP] Checking NicknamesPerCharacter");
+                // Nickname replacements (speaker-dependent)
+                if (NicknamesPerCharacter.TryGetValue(TextPatches.CurrentSpeakerId, out var dict))
+                {
+                    foreach (var kv in dict)
+                    {
+                        if (message.Contains(kv.Key))
                         {
-                            // Don't replace Otome's SQUEAAAAAAKs with SQ's new name
-                            if (name.Equals("SQ") && message.Contains(SqueakPrefix))
-                            {
-                                continue;
-                            }
-                            message = message.Replace(name, NameReplacements[name]);
+                            message = message.Replace(kv.Key, kv.Value);
+                            TextPatches.Logger?.LogInfo($"[STP] Nickname replaced: {kv.Key} -> {kv.Value}");
                         }
                     }
                 }
-                return true;
+                TextPatches.Logger?.LogInfo($"[STP] Final message: {message}");
+                TextPatches.Logger?.LogInfo("[STP] Prefix exit");
+            }
+        }
+
+        [HarmonyPatch]
+        public class SetNormalSerifuPatch
+        {
+            static MethodBase TargetMethod()
+            {
+                var t = typeof(ScriptParser);
+                foreach (var m in AccessTools.GetDeclaredMethods(t))
+                {
+                    if (m.Name == "SetNormalSerifu")
+                    {
+                        var ps = m.GetParameters();
+                        if (ps.Length >= 1 && ps[0].ParameterType == typeof(int))
+                        {
+                            return m; // choose overload whose first arg is int main
+                        }
+                    }
+                }
+                return null;
+            }
+
+            static void Postfix(int main)
+            {
+                TextPatches.CurrentSpeakerId = main;
+                TextPatches.Logger?.LogInfo($"[Postfix] CurrentSpeakerId set to {main}");
+            }
+        }
+
+        [HarmonyPatch]
+        public class ActionDataDoItPatch
+        {
+            static MethodBase TargetMethod()
+            {
+                TextPatches.Logger?.LogInfo("[DoItPatch-Debug] TargetMethod entered");
+
+                var t = AccessTools.TypeByName("gnosia.GameData+actionData");
+                TextPatches.Logger?.LogInfo($"[DoItPatch-Debug] Type lookup: {t}");
+
+                if (t == null)
+                {
+                    TextPatches.Logger?.LogError("[DoItPatch-Debug] FAILED: Type gnosia.GameData+actionData not found");
+                    return null;
+                }
+
+                var m = AccessTools.Method(t, "DoIt");
+                TextPatches.Logger?.LogInfo($"[DoItPatch-Debug] Method lookup: {m}");
+
+                if (m == null)
+                {
+                    TextPatches.Logger?.LogError("[DoItPatch-Debug] FAILED: Method DoIt not found on gnosia.GameData+actionData");
+                }
+                else
+                {
+                    TextPatches.Logger?.LogInfo("[DoItPatch-Debug] SUCCESS: DoIt method found and patched");
+                }
+
+                return m;
+            }
+
+            static void Postfix(object __instance)
+            {
+                TextPatches.Logger?.LogInfo("[DoItPatch-Debug] Postfix triggered");
+                try
+                {
+                    var dataType = AccessTools.TypeByName("gnosia.Data");
+                    var gdField = AccessTools.Field(dataType, "gd");
+                    var gd = gdField.GetValue(null);
+                    var gdType = gd.GetType();
+
+                    var actionsDidField = AccessTools.Field(gdType, "actionsDid");
+                    var actionsDidObj = actionsDidField.GetValue(gd);
+                    var list = actionsDidObj as System.Collections.IList;
+
+                    if (list != null && list.Count > 0)
+                    {
+                        var last = list[list.Count - 1];
+                        var mainPField = AccessTools.Field(last.GetType(), "mainP");
+                        int mainP = (int)mainPField.GetValue(last);
+
+                        TextPatches.CurrentSpeakerId = mainP;
+                        TextPatches.Logger?.LogInfo($"[DoItPatch] CurrentSpeakerId set to {mainP}");
+                    }
+                    else
+                    {
+                        TextPatches.Logger?.LogInfo("[DoItPatch] actionsDid empty");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    TextPatches.Logger?.LogError($"[DoItPatch ERROR] {ex.Message}");
+                }
             }
         }
     }

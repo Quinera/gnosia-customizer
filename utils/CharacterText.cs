@@ -15,6 +15,7 @@ namespace GnosiaCustomizer.utils
         public List<string> Notes { get; set; } = default;
         public byte? Sex { get; set; } = 2; // 0 = Male, 1 = Female, 2 = Non-Binary
         public string? Age { get; set; } = "25";
+        public Dictionary<string, string> Nicknames { get; set; } = new Dictionary<string, string>();
         public Dictionary<string, float> Attributes { get; set; } = default;
         public Dictionary<string, float> AbilityStart { get; set; } = default;
         public Dictionary<string, float> AbilityMax { get; set; } = default;
@@ -79,6 +80,15 @@ namespace GnosiaCustomizer.utils
                         break;
                     case "age":
                         Age = value.ToString();
+                        break;
+                    case "nicknames":
+                        if (value is YamlMappingNode nnMap)
+                        {
+                            foreach (var kv in nnMap.Children)
+                            {
+                                Nicknames[kv.Key.ToString()] = kv.Value.ToString();
+                            }
+                        }
                         break;
                     case "attributes":
                         Attributes = ParseFloatMap(value);
