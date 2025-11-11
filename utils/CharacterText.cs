@@ -14,6 +14,7 @@ namespace GnosiaCustomizer.utils
         public string Honorific { get; set; } = default;
         public byte? Sex { get; set; } = 2; // 0 = Male, 1 = Female, 2 = Non-Binary
         public uint? Age { get; set; } = 25;
+        public Dictionary<string, string> Nicknames { get; set; } = new Dictionary<string, string>();
         public Dictionary<string, float> Attributes { get; set; } = default;
         public Dictionary<string, float> AbilityStart { get; set; } = default;
         public Dictionary<string, float> AbilityMax { get; set; } = default;
@@ -46,23 +47,23 @@ namespace GnosiaCustomizer.utils
 
                 switch (key)
                 {
-                    case "name": 
-                        Name = value.ToString(); 
+                    case "name":
+                        Name = value.ToString();
                         break;
-                    case "origin": 
-                        Origin = value.ToString(); 
+                    case "origin":
+                        Origin = value.ToString();
                         break;
-                    case "bio1": 
+                    case "bio1":
                         Bio1 = value.ToString();
                         break;
-                    case "bio2": 
-                        Bio2 = value.ToString(); 
+                    case "bio2":
+                        Bio2 = value.ToString();
                         break;
                     case "honorific": Honorific = value.ToString();
                         break;
                     case "sex":
-                        if (byte.TryParse(value.ToString(), out var sex)) 
-                        { 
+                        if (byte.TryParse(value.ToString(), out var sex))
+                        {
                             Sex = sex;
                         }
                         break;
@@ -70,6 +71,15 @@ namespace GnosiaCustomizer.utils
                         if (uint.TryParse(value.ToString(), out var age))
                         {
                             Age = age;
+                        }
+                        break;
+                    case "nicknames":
+                        if (value is YamlMappingNode nnMap)
+                        {
+                            foreach (var kv in nnMap.Children)
+                            {
+                                Nicknames[kv.Key.ToString()] = kv.Value.ToString();
+                            }
                         }
                         break;
                     case "attributes":
