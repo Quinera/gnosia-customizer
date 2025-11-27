@@ -9,6 +9,7 @@ using GnosiaCustomizer.utils;
 using gnosia;
 using application;
 using coreSystem;
+using gnosia;
 using System.Collections.Concurrent;
 
 namespace GnosiaCustomizer.patches
@@ -23,6 +24,14 @@ namespace GnosiaCustomizer.patches
         private static readonly Dictionary<string, string> NameReplacements = new();
         internal static int CurrentSpeakerId = 0;
         private static readonly Dictionary<int, Dictionary<string, string>> NicknamesPerCharacter = new();
+        private static int[] localToReal = new int[15];
+
+        private static int MapLocalToReal(int localId)
+        {
+            if (localId < 0 || localId >= localToReal.Length)
+                return -1;
+            return localToReal[localId];
+        }
         private static readonly List<string> NamesToReplace = new()
         {
             "Gina", "SQ", "Raqio", "Stella", "Shigemichi", "Chipie", "Remnan",
@@ -47,7 +56,6 @@ namespace GnosiaCustomizer.patches
                     continue;
                 }
 
-                var localCharacterId = characterId; // Capture the current characterId for the task
                 var yamlPath = Path.Combine(charaPath, ConfigFileName);
                 if (File.Exists(yamlPath))
                 {
@@ -55,34 +63,23 @@ namespace GnosiaCustomizer.patches
                     {
                         var character = new CharacterText();
                         character.LoadFromFile(yamlPath);
-                        if (localCharacterId != 0)
+                        if (characterId != 0)
                         {
-                            CharacterTexts[localCharacterId] = character;
+                            CharacterTexts[characterId] = character;
                             if (character.Nicknames != null)
                             {
                                 var perChar = new Dictionary<string, string>();
                                 foreach (var kv in character.Nicknames)
                                 {
                                     perChar[kv.Key] = kv.Value;
-                                    // Logger?.LogInfo($"Nickname replacement loaded for {localCharacterId}: {kv.Key} → {kv.Value}");
+                                    Logger?.LogInfo($"Nickname replacement loaded for {characterId}: {kv.Key} → {kv.Value}");
                                 }
-                                // remap localCharacterId to absolute ID
-                                var idMap = new Dictionary<int, int>
+                                if (characterId >= 0)
                                 {
-                                    {1,2},{2,3},{3,4},{4,5},{5,6},{6,7},{7,13},{8,8},
-                                    {9,14},{10,9},{11,1},{12,11},{13,12},{14,10}
-                                };
-
-                                if (idMap.TryGetValue(localCharacterId, out var mappedId))
-                                {
-                                    NicknamesPerCharacter[mappedId] = perChar;
-                                }
-                                else
-                                {
-                                    NicknamesPerCharacter[localCharacterId] = perChar;
+                                    NicknamesPerCharacter[characterId] = perChar;
                                 }
                             }
-                            skillMap[localCharacterId] = character.KnownSkills;
+                            skillMap[characterId] = character.KnownSkills;
                         }
                     }
                     catch (Exception ex)
@@ -111,6 +108,68 @@ namespace GnosiaCustomizer.patches
             catch (Exception e)
             {
                 Logger.LogError($"Unexpected error loading textures: {e.Message}");
+            }
+        }
+
+        internal static void UpdateIdMap()
+        {
+            try
+            {
+                var dataType = AccessTools.TypeByName("gnosia.Data");
+                var gdField = AccessTools.Field(dataType, "gd");
+                var gd = gdField.GetValue(null);
+                if (gd == null) return;
+                var gdType = gd.GetType();
+                var personFromIdField = AccessTools.Field(gdType, "personFromId");
+                var personFromIdObj = personFromIdField.GetValue(gd);
+                if (personFromIdObj == null) return;
+
+                var personFromId = personFromIdObj as int[];
+                if (personFromId == null) return;
+
+                for (int i = 0; i < localToReal.Length; i++)
+                    localToReal[i] = -1;
+
+                for (int realId = 0; realId < personFromId.Length; realId++)
+                {
+                    int localId = personFromId[realId];
+                    if (localId >= 0 && localId < localToReal.Length)
+                        localToReal[localId] = realId;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError($"[UpdateIdMap ERROR] {ex.Message}");
+            }
+        }
+
+        [HarmonyPatch(typeof(GameData), "MakeLoop")]
+        public class MakeLoopPatch
+        {
+            static void Postfix()
+            {
+                Logger.LogInfo("[MakeLoop] New loop started. Updating ID Map.");
+                UpdateIdMap();
+            }
+        }
+
+        [HarmonyPatch(typeof(GameData), "GetFromBaseData")]
+        public class LoadGamePatch
+        {
+            static void Postfix()
+            {
+                Logger.LogInfo("[LoadGamePatch] Game loaded from save. Updating ID Map.");
+                UpdateIdMap();
+            }
+        }
+
+        [HarmonyPatch(typeof(GameData), "Initialize")]
+        public class InitializeGameDataPatch
+        {
+            static void Postfix()
+            {
+                Logger.LogInfo("[InitializeGameDataPatch] GameData initialized. Updating ID Map.");
+                UpdateIdMap();
             }
         }
 
@@ -223,7 +282,8 @@ namespace GnosiaCustomizer.patches
 
                 // TextPatches.Logger?.LogInfo("[STP] Checking NicknamesPerCharacter");
                 // Nickname replacements (speaker-dependent)
-                if (NicknamesPerCharacter.TryGetValue(TextPatches.CurrentSpeakerId, out var dict))
+                int realSpeaker = MapLocalToReal(TextPatches.CurrentSpeakerId);
+                if (realSpeaker >= 0 && NicknamesPerCharacter.TryGetValue(realSpeaker, out var dict))
                 {
                     foreach (var kv in dict)
                     {
