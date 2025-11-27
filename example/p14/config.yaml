@@ -10,7 +10,21 @@ age: 15
 bio1: "High Charm and Performance abilities make her\nhard to target for cold sleep, even when doubted.\nActing mainly on emotion, she targets those she\ndislikes over dangerous enemies."
 bio2: ""
 # Honorific when they address other people (ex. -san, -sama, etc). Leave blank for no honorific.
-honorific: 
+honorific: ""
+
+# Information about special notes for characters.
+notes:
+  - "Very intuitive, acts on her emotions."
+  - "Communicates via facial expressions, body language."
+  - "Not human, according to Yuriko."
+  - "When on Guard Duty with Remnan, murders everyone."
+  - "Two-body autonomous doll; other body is in storage."
+  - "Jonas' doll; personality moves between bodies."
+
+# The nickname this character uses when calling others
+# nicknames:
+#   "SQ": "SQ-chan"
+#   "Raqio": "Raqio-kun"
 
 # Their base 'defense' rating against doubt.
 defense_min: 125
@@ -986,7 +1000,8 @@ time_clam:
   sprite: 1
 
 # Night conversation that the character has discovered a liar. {0} = Player name, {1} = Target name.
-# Add 100 to the sprite index to trigger the sound effect.
+
+# Add 100 to the sprite index to trigger the sound effect.
 multiline_night_liar_found:
   lines:
     - line: "(Listen, {0}...\nKukrushka seems to say.)"
@@ -1007,7 +1022,8 @@ multiline_liar_found_followup:
 
 
 # Night conversation if the character wishes to team up. {0} = Player name..
-# Add 100 to the sprite index to trigger the sound effect.
+
+# Add 100 to the sprite index to trigger the sound effect.
 multiline_night_lets_collaborate:
   lines:
     - line: "(Kukrushka looks toward you...\nShe seems to want to say something.)"

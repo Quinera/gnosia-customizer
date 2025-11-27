@@ -5,12 +5,27 @@ sex: 1
 # Where the character is from. Only shown on their bio page.
 origin: "Planet\nVuomo"
 # The character's age. Only shown on their bio page.
-age: 16
+age: "No Data"
 # Information about this character. Only shown on their bio page.
 bio1: "Extremely intuitive, easily seeing through lies.\nVery brave, social, and playful.\nUtterly lacking logic, she relies on emotion\nover probability, and doubts others often."
 bio2: ""
 # Honorific when they address other people (ex. -san, -sama, etc). Leave blank for no honorific.
-honorific: 
+honorific: ""
+
+# Information about special notes for characters.
+notes:
+  - "Extremely intuitive. Terrible at lying."
+  - "Dreams of becoming captain of her own starship."
+  - "Escaped her home planet on Chipie's freighter."
+  - "Good at seeing through lies; bad at lying."
+  - "Her\"tattoo\" is actually a symbiotic slime mold."
+  - "The slime attacks humans once its host dies."
+  - "Her dangerous planet has a high mortality rate."
+
+# The nickname this character uses when calling others
+# nicknames:
+#   "SQ": "SQ-chan"
+#   "Raqio": "Raqio-kun"
 
 # Their base 'defense' rating against doubt.
 defense_min: 105
@@ -986,7 +1001,8 @@ time_clam:
   sprite: 2
 
 # Night conversation that the character has discovered a liar. {0} = Player name, {1} = Target name.
-# Add 100 to the sprite index to trigger the sound effect.
+
+# Add 100 to the sprite index to trigger the sound effect.
 multiline_night_liar_found:
   lines:
     - line: "Hey, {0}, listen.\nI found the liar!"
@@ -1007,7 +1023,8 @@ multiline_liar_found_followup:
 
 
 # Night conversation if the character wishes to team up. {0} = Player name..
-# Add 100 to the sprite index to trigger the sound effect.
+
+# Add 100 to the sprite index to trigger the sound effect.
 multiline_night_lets_collaborate:
   lines:
     - line: "Oh hey, {0}, perfect timing.\nListen, I got a favor to ask. Well, it's more of a \"plan\"."

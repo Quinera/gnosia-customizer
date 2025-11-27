@@ -10,7 +10,22 @@ age: 33
 bio1: "Possesses generally high abilities.\nHowever, possibly due to his chaotic personality,\nthese abilities are rarely put to actual use."
 bio2: ""
 # Honorific when they address other people (ex. -san, -sama, etc). Leave blank for no honorific.
-honorific: 
+honorific: ""
+
+# Information about special notes for characters.
+notes:
+  - "Generally high abilities, but this isn't apparent."
+  - "Was on a legendary ship almost 1000 years ago."
+  - "Owner of interstellar cruiser \"D.Q.O.\"."
+  - "Former space exploration age hero; current weirdo."
+  - "Has a strong affinity for Kukrushka."
+  - "As a video game addict, was a hermit for 100 years."
+  - "Worships Kukrushka as a \"sacred miracle doll\"."
+
+# The nickname this character uses when calling others
+# nicknames:
+#   "SQ": "SQ-chan"
+#   "Raqio": "Raqio-kun"
 
 # Their base 'defense' rating against doubt.
 defense_min: 125
@@ -986,7 +1001,8 @@ time_clam:
   sprite: 3
 
 # Night conversation that the character has discovered a liar. {0} = Player name, {1} = Target name.
-# Add 100 to the sprite index to trigger the sound effect.
+
+# Add 100 to the sprite index to trigger the sound effect.
 multiline_night_liar_found:
   lines:
     - line: "The truth can be found within a lie.\nThis applies especially to us now."
@@ -1007,7 +1023,8 @@ multiline_liar_found_followup:
 
 
 # Night conversation if the character wishes to team up. {0} = Player name..
-# Add 100 to the sprite index to trigger the sound effect.
+
+# Add 100 to the sprite index to trigger the sound effect.
 multiline_night_lets_collaborate:
   lines:
     - line: "The stormwinds blow...\nThe stormwinds known as... GNOSIA."
